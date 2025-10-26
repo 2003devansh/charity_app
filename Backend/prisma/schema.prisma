@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserRole {
+  DONOR
+  RECIPIENT
+  VOLUNTEER
+  ADMIN
+}
+
+enum DonationStatus {
+  AVAILABLE
+  CLAIMED
+  DELIVERED
+}
+
+enum RequestStatus {
+  OPEN
+  FULFILLED
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+}
+
+enum Category {
+  FOOD
+  CLOTHES
+  SUPPLIES
+  OTHER
+}
+
+// Models
+model User {
+  id                String           @id @default(uuid())
+  name              String
+  email             String           @unique
+  password          String
+  role              UserRole
+  location          String?
+  createdAt         DateTime         @default(now())
+
+  // Relations
+  donations         Donation[]       @relation("DonorDonations")
+  requests          Request[]        @relation("UserRequests")
+  volunteerTasks    VolunteerTask[]  @relation("VolunteerAssignments")
+  receivedDonations Donation[]       @relation("ReceivedDonations")
+  notifications      Notification[]
+}
+
+model Donation {
+  id               String           @id @default(uuid())
+  title            String
+  description      String
+  category         Category
+  quantity         Int
+  status           DonationStatus   @default(AVAILABLE)
+  createdAt        DateTime         @default(now())
+
+  // Relations
+  donor            User             @relation("DonorDonations", fields: [donorId], references: [id])
+  donorId          String
+
+  volunteerTasks   VolunteerTask[]  // One-to-many relationship
+
+  recipient        User?            @relation("ReceivedDonations", fields: [recipientId], references: [id])
+  recipientId      String?
+}
+
+model Request {
+  id           String        @id @default(uuid())
+  title        String
+  description  String
+  category     Category
+  status       RequestStatus @default(OPEN)
+  createdAt    DateTime      @default(now())
+
+  recipient    User          @relation("UserRequests", fields: [recipientId], references: [id])
+  recipientId  String
+}
+
+model VolunteerTask {
+  id           String       @id @default(uuid())
+  status       TaskStatus   @default(PENDING)
+  createdAt    DateTime     @default(now())
+
+  volunteer    User         @relation("VolunteerAssignments", fields: [volunteerId], references: [id])
+  volunteerId  String
+
+  donation     Donation     @relation(fields: [donationId], references: [id])
+  donationId   String
+}
+
+
+model Notification {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  message     String
+  type        String?  // e.g. DONATION, REQUEST, TASK
+  referenceId String?  // id of related donation/request/task
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
