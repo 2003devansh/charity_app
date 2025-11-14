@@ -1,9 +1,11 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosClient } from "../../api/AxiosClient";
 
 export const registerAuth = createAsyncThunk(
   "register",
-  async (data, toolkit) => {
+  async (data: any, toolkit) => {
     const response = await AxiosClient({
       url: "/register",
       type: "POST",
@@ -14,7 +16,7 @@ export const registerAuth = createAsyncThunk(
   }
 );
 
-export const loginAuth = createAsyncThunk("login", async (data, toolkit) => {
+export const loginAuth = createAsyncThunk("login", async (data: any, toolkit) => {
   const response = await AxiosClient({
     url: "/login",
     type: "POST",
