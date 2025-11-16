@@ -18,7 +18,7 @@ export const registerAuth = createAsyncThunk(
 
 export const loginAuth = createAsyncThunk("login", async (data: any, toolkit) => {
   const response = await AxiosClient({
-    url: "/login",
+    url: "/auth/login",
     type: "POST",
     data,
     toolkit,

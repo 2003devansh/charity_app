@@ -45,3 +45,5 @@ export const AuthSlice = createSlice({
       });
   },
 });
+
+export default AuthSlice.reducer;
