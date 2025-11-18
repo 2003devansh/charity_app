@@ -14,7 +14,7 @@ model User {
   createdAt         DateTime        @default(now())
   location          String?
   password          String
-  role              UserRole
+  role              UserRole?
   donations         Donation[]      @relation("DonorDonations")
   receivedDonations Donation[]      @relation("ReceivedDonations")
   notifications     Notification[]

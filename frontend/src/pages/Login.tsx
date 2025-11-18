@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Button, Form, Input } from "antd";
-import { useAppDispatch } from "../redux/store/hook";
+import { useAppDispatch, useAppSelector } from "../redux/store/hook";
 import { loginAuth } from "../redux/AuthRedux/AuthAction";
 import { useState } from "react";
 import { LoadingComponent } from "../components/LoadingComponent";
@@ -10,21 +10,22 @@ import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+
+  const loading = useAppSelector((state) => state.auth.authLoginLoader);
+
   const [error, setError] = useState("");
 
   const onFinish = async (values: any) => {
     setError("");
-    setLoading(true);
+
     try {
       const res = await dispatch(loginAuth(values)).unwrap();
+
       localStorage.setItem("token", res.token);
       localStorage.setItem("user", JSON.stringify(res.user));
       navigate("/home");
     } catch (err: any) {
       setError(err?.error || "Login failed. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 

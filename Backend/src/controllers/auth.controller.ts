@@ -5,7 +5,13 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(505).json({
+      message: "Missing field encounter while registering",
+    });
+  }
 
   try {
     const data = await prisma.user.findUnique({
@@ -25,7 +31,6 @@ export const register = async (req: Request, res: Response) => {
         name,
         email,
         password: hashedPassword,
-        role: role || "DONOR",
       },
     });
 
