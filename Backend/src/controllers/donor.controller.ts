@@ -179,3 +179,45 @@ export const deleteDonation = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Something went wrong" });
   }
 };
+
+export const getAllDonationByLoggedInUser = async (
+  req: Request,
+  res: Response
+) => {
+  const { donorId } = req.params;
+
+  if (!donorId) {
+    return res.status(400).json({
+      message: "Donor ID is required",
+    });
+  }
+
+  try {
+    const donations = await prisma.donation.findMany({
+      where: {
+        donorId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        title: true,
+        description: true,
+        category: true,
+        quantity: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Donations fetched successfully",
+      donations,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+};

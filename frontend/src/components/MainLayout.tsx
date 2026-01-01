@@ -74,7 +74,7 @@ const MainLayout = () => {
 
       <div
         className="
-          absolute top-16
+          absolute top-8
            text-white p-2  
           cursor-pointer transition-all duration-300
         "
