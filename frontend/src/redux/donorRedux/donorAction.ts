@@ -6,11 +6,10 @@ import { AxiosClient } from "../../api/AxiosClient";
 // Get all available donations
 export const getAllDonations = createAsyncThunk(
   "GET_ALL_DONATIONS",
-  async (data: any, toolkit) => {
+  async (_: void, toolkit) => {
     const response = await AxiosClient({
       url: "/donor",
       type: "GET",
-      data,
       toolkit,
     });
     return response;
