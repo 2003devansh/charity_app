@@ -1,118 +1,138 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import {
-  CreateDonations,
-  DeleteDonations,
   getAllDonations,
-  GetAllDonationsForLogedIn,
-  getDonationaByID,
-  UpdateDonations,
+  createDonation,
+  getDonationById,
+  updateDonationStatus,
+  deleteDonation,
+  getMyDonations,
 } from "./donorAction";
 
-interface initialStateInterfaceForDonor {
-  AllDonationData?: any;
-  AllDonationLoader: boolean;
-  AddDonationsData?: any;
-  AddDonationsLoader: boolean;
-  GetDonationByIdData?: any;
-  GetDonationByIdLoader: boolean;
-  UpdateDonationData?: any;
-  UpdateDonationLoader: boolean;
-  DeleteDonationLoader: boolean;
-  DeleteDonationData?: any;
-  LoggedInUserData?: any;
-  LoggedInUserLoader: any;
+interface DonorState {
+  availableDonations?: any;
+  availableDonationsLoading: boolean;
+
+  myDonations?: any;
+  myDonationsLoading: boolean;
+
+  donationById?: any;
+  donationByIdLoading: boolean;
+
+  createDonationLoading: boolean;
+  updateDonationLoading: boolean;
+  deleteDonationLoading: boolean;
 }
 
-const initialState: initialStateInterfaceForDonor = {
-  AllDonationLoader: false,
-  AddDonationsLoader: false,
-  GetDonationByIdLoader: false,
-  UpdateDonationLoader: false,
-  DeleteDonationLoader: false,
-  LoggedInUserLoader: false,
+const initialState: DonorState = {
+  availableDonationsLoading: false,
+  myDonationsLoading: false,
+  donationByIdLoading: false,
+  createDonationLoading: false,
+  updateDonationLoading: false,
+  deleteDonationLoading: false,
 };
 
-export const DonorSlice = createSlice({
-  name: "donorSlice",
+export const donorSlice = createSlice({
+  name: "donor",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Slice for Get All donations
+      /**
+       * ----------------------------------
+       * GET ALL AVAILABLE DONATIONS
+       * ----------------------------------
+       */
       .addMatcher(isAnyOf(getAllDonations.pending), (state) => {
-        state.AllDonationLoader = true;
+        state.availableDonationsLoading = true;
       })
       .addMatcher(isAnyOf(getAllDonations.fulfilled), (state, action) => {
-        state.AllDonationData = action.payload;
-        state.AllDonationLoader = false;
+        state.availableDonationsLoading = false;
+        state.availableDonations = action.payload;
       })
       .addMatcher(isAnyOf(getAllDonations.rejected), (state) => {
-        state.AllDonationLoader = false;
+        state.availableDonationsLoading = false;
       })
 
-      //  Slice for Creating a donations
-      .addMatcher(isAnyOf(CreateDonations.pending), (state) => {
-        state.AddDonationsLoader = true;
+      /**
+       * ----------------------------------
+       * GET MY DONATIONS (LOGGED IN USER)
+       * ----------------------------------
+       */
+      .addMatcher(isAnyOf(getMyDonations.pending), (state) => {
+        state.myDonationsLoading = true;
       })
-      .addMatcher(isAnyOf(CreateDonations.fulfilled), (state, action) => {
-        state.AddDonationsData = action.payload;
-        state.AddDonationsLoader = false;
+      .addMatcher(isAnyOf(getMyDonations.fulfilled), (state, action) => {
+        state.myDonationsLoading = false;
+        state.myDonations = action.payload;
       })
-      .addMatcher(isAnyOf(CreateDonations.rejected), (state) => {
-        state.AddDonationsLoader = false;
-      })
-
-      //Slice for get Donation By Id
-      .addMatcher(isAnyOf(getDonationaByID.rejected), (state) => {
-        state.GetDonationByIdLoader = true;
-      })
-      .addMatcher(isAnyOf(getDonationaByID.fulfilled), (state, action) => {
-        state.GetDonationByIdData = action.payload;
-        state.GetDonationByIdLoader = false;
-      })
-      .addMatcher(isAnyOf(getDonationaByID.pending), (state) => {
-        state.GetDonationByIdLoader = false;
+      .addMatcher(isAnyOf(getMyDonations.rejected), (state) => {
+        state.myDonationsLoading = false;
       })
 
-      // slice for Update donation
-      .addMatcher(isAnyOf(UpdateDonations.rejected), (state) => {
-        state.UpdateDonationLoader = true;
+      /**
+       * ----------------------------------
+       * GET DONATION BY ID
+       * ----------------------------------
+       */
+      .addMatcher(isAnyOf(getDonationById.pending), (state) => {
+        state.donationByIdLoading = true;
       })
-      .addMatcher(isAnyOf(UpdateDonations.fulfilled), (state, action) => {
-        state.UpdateDonationLoader = false;
-        state.UpdateDonationData = action.payload;
+      .addMatcher(isAnyOf(getDonationById.fulfilled), (state, action) => {
+        state.donationByIdLoading = false;
+        state.donationById = action.payload;
       })
-      .addMatcher(isAnyOf(UpdateDonations.pending), (state) => {
-        state.UpdateDonationLoader = false;
-      })
-
-      // Slice for Delete donation
-      .addMatcher(isAnyOf(DeleteDonations.pending), (state) => {
-        state.DeleteDonationLoader = true;
-      })
-      .addMatcher(isAnyOf(DeleteDonations.fulfilled), (state, action) => {
-        state.DeleteDonationData = action.payload;
-        state.DeleteDonationLoader = false;
-      })
-      .addMatcher(isAnyOf(DeleteDonations.rejected), (state) => {
-        state.DeleteDonationLoader = false;
+      .addMatcher(isAnyOf(getDonationById.rejected), (state) => {
+        state.donationByIdLoading = false;
       })
 
-      //Slice for Logged-in user
-      .addMatcher(isAnyOf(GetAllDonationsForLogedIn.pending), (state) => {
-        state.LoggedInUserLoader = true;
+      /**
+       * ----------------------------------
+       * CREATE DONATION
+       * ----------------------------------
+       */
+      .addMatcher(isAnyOf(createDonation.pending), (state) => {
+        state.createDonationLoading = true;
       })
-      .addMatcher(
-        isAnyOf(GetAllDonationsForLogedIn.fulfilled),
-        (state, action) => {
-          state.LoggedInUserLoader = false;
-          state.LoggedInUserData = action.payload;
-        }
-      )
-      .addMatcher(isAnyOf(GetAllDonationsForLogedIn.rejected), (state) => {
-        state.LoggedInUserLoader = false;
+      .addMatcher(isAnyOf(createDonation.fulfilled), (state) => {
+        state.createDonationLoading = false;
+      })
+      .addMatcher(isAnyOf(createDonation.rejected), (state) => {
+        state.createDonationLoading = false;
+      })
+
+      /**
+       * ----------------------------------
+       * UPDATE DONATION STATUS
+       * ----------------------------------
+       */
+      .addMatcher(isAnyOf(updateDonationStatus.pending), (state) => {
+        state.updateDonationLoading = true;
+      })
+      .addMatcher(isAnyOf(updateDonationStatus.fulfilled), (state) => {
+        state.updateDonationLoading = false;
+      })
+      .addMatcher(isAnyOf(updateDonationStatus.rejected), (state) => {
+        state.updateDonationLoading = false;
+      })
+
+      /**
+       * ----------------------------------
+       * DELETE DONATION
+       * ----------------------------------
+       */
+      .addMatcher(isAnyOf(deleteDonation.pending), (state) => {
+        state.deleteDonationLoading = true;
+      })
+      .addMatcher(isAnyOf(deleteDonation.fulfilled), (state) => {
+        state.deleteDonationLoading = false;
+      })
+      .addMatcher(isAnyOf(deleteDonation.rejected), (state) => {
+        state.deleteDonationLoading = false;
       });
   },
 });
+
+export default donorSlice.reducer;

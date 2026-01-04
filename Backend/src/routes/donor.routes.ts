@@ -1,31 +1,25 @@
 import { Router } from "express";
 import {
   createDonation,
-  AllDonation,
-  getDonationbyId,
-  updateDonation,
+  getAllAvailableDonations,
+  getDonationById,
+  updateDonationStatus,
   deleteDonation,
-  getAllDonationByLoggedInUser,
+  getMyDonations,
 } from "../controllers/donor.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
-// Create a new donation
-router.post("/", createDonation);
+//PUBLIC ROUTES
 
-// Get all available donations
-router.get("/", AllDonation);
+router.get("/", getAllAvailableDonations);
+router.get("/:id", getDonationById);
 
-// Get a specific donation by ID
-router.get("/:id", getDonationbyId);
-
-// Update donation status
-router.patch("/:id", updateDonation);
-
-// Delete a donation (only donor)
-router.delete("/:id", deleteDonation);
-
-// Get all the donation for logedIn user
-router.get("/getAllDonation", getAllDonationByLoggedInUser);
+// AUTHENTICATED ROUTES
+router.post("/", authMiddleware, createDonation);
+router.get("/me", authMiddleware, getMyDonations);
+router.patch("/:id", authMiddleware, updateDonationStatus);
+router.delete("/:id", authMiddleware, deleteDonation);
 
 export default router;

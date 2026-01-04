@@ -1,11 +1,16 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosClient } from "../../api/AxiosClient";
 
-// Get all available donations
+/**
+ * ----------------------------------------------------
+ * GET ALL AVAILABLE DONATIONS (PUBLIC)
+ * GET /donor
+ * ----------------------------------------------------
+ */
 export const getAllDonations = createAsyncThunk(
-  "GET_ALL_DONATIONS",
+  "donations/getAllAvailable",
   async (_: void, toolkit) => {
     const response = await AxiosClient({
       url: "/donor",
@@ -16,10 +21,23 @@ export const getAllDonations = createAsyncThunk(
   }
 );
 
-//  Create a donation
-export const CreateDonations = createAsyncThunk(
-  "CREATE_DONATIONS",
-  async (data: any, toolkit) => {
+/**
+ * ----------------------------------------------------
+ * CREATE DONATION (AUTH REQUIRED)
+ * POST /donor
+ * ----------------------------------------------------
+ */
+export const createDonation = createAsyncThunk(
+  "donations/create",
+  async (
+    data: {
+      title: string;
+      description: string;
+      category: string;
+      quantity: number;
+    },
+    toolkit
+  ) => {
     const response = await AxiosClient({
       url: "/donor",
       type: "POST",
@@ -30,58 +48,79 @@ export const CreateDonations = createAsyncThunk(
   }
 );
 
-// get All donation By ID
-export const getDonationaByID = createAsyncThunk(
-  "GET_ALL_DONATION_BY_ID",
-  async (data: any, toolkit) => {
+/**
+ * ----------------------------------------------------
+ * GET DONATION BY ID (PUBLIC)
+ * GET /donor/:id
+ * ----------------------------------------------------
+ */
+export const getDonationById = createAsyncThunk(
+  "donations/getById",
+  async (id: string, toolkit) => {
     const response = await AxiosClient({
-      url: "/donor/:id",
+      url: `/donor/${id}`,
       type: "GET",
       toolkit,
-      data,
     });
     return response;
   }
 );
 
-// Update donations
-export const UpdateDonations = createAsyncThunk(
-  "UPDATE_DONATIONS",
-  async (data: any, toolkit) => {
+/**
+ * ----------------------------------------------------
+ * UPDATE DONATION STATUS (OWNER ONLY)
+ * PATCH /donor/:id
+ * ----------------------------------------------------
+ */
+export const updateDonationStatus = createAsyncThunk(
+  "donations/updateStatus",
+  async (
+    data: {
+      id: string;
+      status: "AVAILABLE" | "CLAIMED" | "DELIVERED";
+    },
+    toolkit
+  ) => {
     const response = await AxiosClient({
-      url: "/donor/:id",
+      url: `/donor/${data.id}`,
       type: "PATCH",
+      data: { status: data.status },
       toolkit,
-      data,
     });
-
     return response;
   }
 );
 
-// delete donations (only the owner of the donations will be able to delete them )
-export const DeleteDonations = createAsyncThunk(
-  "DELETE_DONATIONS",
-  async (data: any, toolkit) => {
+/**
+ * ----------------------------------------------------
+ * DELETE DONATION (OWNER ONLY)
+ * DELETE /donor/:id
+ * ----------------------------------------------------
+ */
+export const deleteDonation = createAsyncThunk(
+  "donations/delete",
+  async (id: string, toolkit) => {
     const response = await AxiosClient({
-      url: "/donor/:id",
+      url: `/donor/${id}`,
       type: "DELETE",
-      data,
       toolkit,
     });
-
     return response;
   }
 );
 
-// Get All the donations of logedIn User
-export const GetAllDonationsForLogedIn = createAsyncThunk(
-  "GET_ALL_DONATIONS_FOR_LOGGED_IN_USER",
-  async (data: any, toolkit) => {
+/**
+ * ----------------------------------------------------
+ * GET LOGGED-IN USER DONATIONS (AUTH REQUIRED)
+ * GET /donor/me
+ * ----------------------------------------------------
+ */
+export const getMyDonations = createAsyncThunk(
+  "donations/getMine",
+  async (_: void, toolkit) => {
     const response = await AxiosClient({
-      url: "/donor/getAllDonation",
+      url: "/donor/me",
       type: "GET",
-      data,
       toolkit,
     });
     return response;

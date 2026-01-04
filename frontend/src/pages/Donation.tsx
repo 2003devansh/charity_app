@@ -43,6 +43,12 @@ const Donation = () => {
                 />
               </Form.Item>
             </Col>
+
+            <Col>
+              <Form.Item>
+                <Input placeholder="Input a number" maxLength={16} />
+              </Form.Item>
+            </Col>
           </Row>
 
           <Form.Item>
