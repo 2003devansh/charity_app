@@ -3,12 +3,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosClient } from "../../api/AxiosClient";
 
-/**
- * ----------------------------------------------------
- * GET ALL AVAILABLE DONATIONS (PUBLIC)
- * GET /donor
- * ----------------------------------------------------
- */
 export const getAllDonations = createAsyncThunk(
   "donations/getAllAvailable",
   async (_: void, toolkit) => {
@@ -21,12 +15,6 @@ export const getAllDonations = createAsyncThunk(
   }
 );
 
-/**
- * ----------------------------------------------------
- * CREATE DONATION (AUTH REQUIRED)
- * POST /donor
- * ----------------------------------------------------
- */
 export const createDonation = createAsyncThunk(
   "donations/create",
   async (
@@ -48,12 +36,6 @@ export const createDonation = createAsyncThunk(
   }
 );
 
-/**
- * ----------------------------------------------------
- * GET DONATION BY ID (PUBLIC)
- * GET /donor/:id
- * ----------------------------------------------------
- */
 export const getDonationById = createAsyncThunk(
   "donations/getById",
   async (id: string, toolkit) => {
@@ -66,12 +48,6 @@ export const getDonationById = createAsyncThunk(
   }
 );
 
-/**
- * ----------------------------------------------------
- * UPDATE DONATION STATUS (OWNER ONLY)
- * PATCH /donor/:id
- * ----------------------------------------------------
- */
 export const updateDonationStatus = createAsyncThunk(
   "donations/updateStatus",
   async (
@@ -91,12 +67,6 @@ export const updateDonationStatus = createAsyncThunk(
   }
 );
 
-/**
- * ----------------------------------------------------
- * DELETE DONATION (OWNER ONLY)
- * DELETE /donor/:id
- * ----------------------------------------------------
- */
 export const deleteDonation = createAsyncThunk(
   "donations/delete",
   async (id: string, toolkit) => {
@@ -109,12 +79,6 @@ export const deleteDonation = createAsyncThunk(
   }
 );
 
-/**
- * ----------------------------------------------------
- * GET LOGGED-IN USER DONATIONS (AUTH REQUIRED)
- * GET /donor/me
- * ----------------------------------------------------
- */
 export const getMyDonations = createAsyncThunk(
   "donations/getMine",
   async (_: void, toolkit) => {
