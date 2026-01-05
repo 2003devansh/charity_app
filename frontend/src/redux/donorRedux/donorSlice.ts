@@ -21,6 +21,7 @@ interface DonorState {
   donationByIdLoading: boolean;
 
   createDonationLoading: boolean;
+  createDonationData?: any;
   updateDonationLoading: boolean;
   deleteDonationLoading: boolean;
 }
@@ -41,9 +42,7 @@ export const donorSlice = createSlice({
   extraReducers: (builder) => {
     builder
       /**
-       * ----------------------------------
        * GET ALL AVAILABLE DONATIONS
-       * ----------------------------------
        */
       .addMatcher(isAnyOf(getAllDonations.pending), (state) => {
         state.availableDonationsLoading = true;
@@ -57,9 +56,7 @@ export const donorSlice = createSlice({
       })
 
       /**
-       * ----------------------------------
        * GET MY DONATIONS (LOGGED IN USER)
-       * ----------------------------------
        */
       .addMatcher(isAnyOf(getMyDonations.pending), (state) => {
         state.myDonationsLoading = true;
@@ -73,9 +70,7 @@ export const donorSlice = createSlice({
       })
 
       /**
-       * ----------------------------------
        * GET DONATION BY ID
-       * ----------------------------------
        */
       .addMatcher(isAnyOf(getDonationById.pending), (state) => {
         state.donationByIdLoading = true;
@@ -89,24 +84,21 @@ export const donorSlice = createSlice({
       })
 
       /**
-       * ----------------------------------
        * CREATE DONATION
-       * ----------------------------------
        */
       .addMatcher(isAnyOf(createDonation.pending), (state) => {
         state.createDonationLoading = true;
       })
-      .addMatcher(isAnyOf(createDonation.fulfilled), (state) => {
+      .addMatcher(isAnyOf(createDonation.fulfilled), (state, action) => {
         state.createDonationLoading = false;
+        state.createDonationData = action.payload;
       })
       .addMatcher(isAnyOf(createDonation.rejected), (state) => {
         state.createDonationLoading = false;
       })
 
       /**
-       * ----------------------------------
        * UPDATE DONATION STATUS
-       * ----------------------------------
        */
       .addMatcher(isAnyOf(updateDonationStatus.pending), (state) => {
         state.updateDonationLoading = true;
@@ -119,9 +111,7 @@ export const donorSlice = createSlice({
       })
 
       /**
-       * ----------------------------------
        * DELETE DONATION
-       * ----------------------------------
        */
       .addMatcher(isAnyOf(deleteDonation.pending), (state) => {
         state.deleteDonationLoading = true;
