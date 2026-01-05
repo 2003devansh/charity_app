@@ -19,12 +19,17 @@ export const AxiosClient = async ({
   toolkit,
 }: AxiosClientInterfaceParams) => {
   try {
+    const token = localStorage.getItem("token");
+
     const response = await axios({
       baseURL: "http://localhost:4000",
       url,
       method: type,
       data,
       params,
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
     });
 
     return response.data;
