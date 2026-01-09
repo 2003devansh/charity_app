@@ -12,9 +12,21 @@ export const createRequest = createAsyncThunk(
     toolkit
   ) => {
     const response = await AxiosClient({
-      url: "",
+      url: "/request",
       type: "POST",
       data,
+      toolkit,
+    });
+    return response;
+  }
+);
+
+export const getMyRequests = createAsyncThunk(
+  "request/getMine",
+  async (_: void, toolkit) => {
+    const response = await AxiosClient({
+      url: "/request/myrequests",
+      type: "GET",
       toolkit,
     });
     return response;
