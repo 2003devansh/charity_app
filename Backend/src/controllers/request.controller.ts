@@ -3,85 +3,91 @@ import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
 
+/**
+ * ----------------------------------------
+ * CREATE REQUEST (AUTH REQUIRED)
+ * POST /requests
+ * ----------------------------------------
+ */
 export const createRequest = async (req: Request, res: Response) => {
-  const { title, description, category, recipientId } = req.body;
+  const { title, description, category, quantity } = req.body;
 
-  if (!title || !description || !category || !recipientId) {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  if (!title || !description || !category) {
     return res.status(400).json({
       message: "All fields are required",
     });
   }
 
   try {
-    const data = await prisma.request.create({
+    const request = await prisma.request.create({
       data: {
         title,
         description,
         category,
-        recipient: {
-          connect: {
-            id: recipientId,
-          },
-        },
+        recipientId: req.user.id,
+        status: "OPEN",
       },
     });
 
-    if (!data) {
-      return res.status(404).json({
-        message: "Cant create request",
-      });
-    }
-
     return res.status(201).json({
-      message: "Request created succesfully",
-      data,
+      message: "Request created successfully",
+      request,
     });
   } catch (error) {
     console.error(error);
-    res.status(501).json({
-      message: "Somethinng went wrong",
+    return res.status(500).json({
+      message: "Failed to create request",
     });
   }
 };
 
+/**
+ * ----------------------------------------
+ * GET LOGGED-IN USER REQUESTS
+ * GET /requests/myrequests
+ * ----------------------------------------
+ */
 export const getMyRequests = async (req: Request, res: Response) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   try {
     const requests = await prisma.request.findMany({
-      where: { status: "OPEN" },
-      include: {
-        recipient: {
-          select: {
-            id: true,
-            name: true,
-            location: true,
-          },
-        },
+      where: {
+        recipientId: req.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
-    if (requests.length === 0) {
-      return res.status(404).json({
-        message: "Request box is empty",
-      });
-    }
-
-    res.status(200).json({
-      message: "Requests retrieved successfully",
+    return res.status(200).json({
       requests,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Something went wrong",
     });
   }
 };
 
+/**
+ * ----------------------------------------
+ * GET REQUEST BY ID (PUBLIC)
+ * GET /requests/:id
+ * ----------------------------------------
+ */
 export const getRequestById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const data = await prisma.request.findUnique({
+    const request = await prisma.request.findUnique({
       where: { id },
       include: {
         recipient: {
@@ -94,60 +100,42 @@ export const getRequestById = async (req: Request, res: Response) => {
       },
     });
 
-    if (!data) {
+    if (!request) {
       return res.status(404).json({
-        message: "Cant find requests",
+        message: "Request not found",
       });
     }
 
-    return res.status(201).json({
-      message: "Request fetched succesfully",
-      data,
+    return res.status(200).json({
+      request,
     });
   } catch (error) {
     console.error(error);
-    res.status(501).json({
+    return res.status(500).json({
       message: "Something went wrong",
     });
   }
 };
 
+/**
+ * ----------------------------------------
+ * UPDATE REQUEST STATUS (OWNER ONLY)
+ * PATCH /requests/:id
+ * ----------------------------------------
+ */
 export const updateRequest = async (req: Request, res: Response) => {
-  const { status } = req.body;
   const { id } = req.params;
+  const { status } = req.body;
 
-  try {
-    const data = await prisma.request.update({
-      where: { id },
-      data: {
-        status: "FULFILLED",
-      },
-      include: {
-        recipient: {
-          select: {
-            id: true,
-            name: true,
-            location: true,
-          },
-        },
-      },
-    });
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-    return res.status(201).json({
-      message: "Status changed succesfully",
-      data,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(501).json({
-      message: "Something went wrong",
+  if (!["OPEN", "FULFILLED", "CANCELLED"].includes(status)) {
+    return res.status(400).json({
+      message: "Invalid status",
     });
   }
-};
-
-export const deleteRequest = async (req: Request, res: Response) => {
-  const { id } = req.params; // request id from URL
-  const { recipientId } = req.body; // recipient id from body
 
   try {
     const request = await prisma.request.findUnique({
@@ -160,9 +148,56 @@ export const deleteRequest = async (req: Request, res: Response) => {
       });
     }
 
-    if (request.recipientId !== recipientId) {
+    if (request.recipientId !== req.user.id) {
       return res.status(403).json({
-        message: "You are not authorized to delete this request",
+        message: "Not authorized",
+      });
+    }
+
+    const updatedRequest = await prisma.request.update({
+      where: { id },
+      data: { status },
+    });
+
+    return res.status(200).json({
+      message: "Request updated successfully",
+      updatedRequest,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+};
+
+/**
+ * ----------------------------------------
+ * DELETE REQUEST (OWNER ONLY)
+ * DELETE /requests/:id
+ * ----------------------------------------
+ */
+export const deleteRequest = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const request = await prisma.request.findUnique({
+      where: { id },
+    });
+
+    if (!request) {
+      return res.status(404).json({
+        message: "Request not found",
+      });
+    }
+
+    if (request.recipientId !== req.user.id) {
+      return res.status(403).json({
+        message: "Not authorized",
       });
     }
 
@@ -175,8 +210,8 @@ export const deleteRequest = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Something went wrong while deleting request",
+    return res.status(500).json({
+      message: "Something went wrong",
     });
   }
 };

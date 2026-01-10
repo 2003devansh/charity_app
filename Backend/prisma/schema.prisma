@@ -42,6 +42,7 @@ model Request {
   title       String
   description String
   category    Category
+  quantity       Int
   status      RequestStatus @default(OPEN)
   createdAt   DateTime      @default(now())
   recipientId String

@@ -6,22 +6,21 @@ import {
   updateRequest,
   deleteRequest,
 } from "../controllers/request.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = express.Router();
 
-// ✅ Create a new request
-router.post("/", createRequest);
+/**
+ * AUTHENTICATED ROUTES
+ */
+router.post("/", authMiddleware, createRequest);
+router.get("/myrequests", authMiddleware, getMyRequests);
+router.patch("/:id", authMiddleware, updateRequest);
+router.delete("/:id", authMiddleware, deleteRequest);
 
-// ✅ Get all requests made by a recipient
-router.get("/myrequests", getMyRequests);
-
-// ✅ Get specific request by ID
+/**
+ * PUBLIC ROUTE
+ */
 router.get("/:id", getRequestById);
-
-// ✅ Update request status (e.g., FULFILLED)
-router.patch("/:id", updateRequest);
-
-// ✅ Delete a request
-router.delete("/:id", deleteRequest);
 
 export default router;
