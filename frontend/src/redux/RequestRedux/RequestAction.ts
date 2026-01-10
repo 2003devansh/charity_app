@@ -32,3 +32,46 @@ export const getMyRequests = createAsyncThunk(
     return response;
   }
 );
+
+export const getRequestById = createAsyncThunk(
+  "request/getRequestById",
+  async (id: string, toolkit) => {
+    const response = await AxiosClient({
+      url: `/requests/${id}`,
+      type: "GET",
+      toolkit,
+    });
+    return response;
+  }
+);
+
+export const updateRequest = createAsyncThunk(
+  "request/UpdateRequest",
+  async (
+    data: {
+      id: string;
+      status: "OPEN" | "FULFILLED";
+    },
+    toolkit
+  ) => {
+    const response = await AxiosClient({
+      url: `/requests/${data.id}`,
+      type: "PATCH",
+      data: { status: data.status },
+      toolkit,
+    });
+    return response;
+  }
+);
+
+export const deleteRequest = createAsyncThunk(
+  "requests/delete",
+  async (id: string, toolkit) => {
+    const response = await AxiosClient({
+      url: `/requests/${id}`,
+      type: "DELETE",
+      toolkit,
+    });
+    return response;
+  }
+);
