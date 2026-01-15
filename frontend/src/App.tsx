@@ -6,6 +6,8 @@ import BallFollower from "./components/BallFollower";
 import MainLayout from "./components/MainLayout";
 import Donation from "./pages/Donation";
 import Dashboard from "./pages/Dashboard";
+import RequestPage from "./pages/RequestPage";
+import VolenteerPage from "./pages/VolenteerPage";
 
 const App = () => {
   const location = useLocation();
@@ -25,6 +27,8 @@ const App = () => {
           <Route path="/home" element={<HomePage />} />
           <Route path="/donations" element={<Donation />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/requests" element={<RequestPage />} />
+          <Route path="/volenteer" element={<VolenteerPage />} />
         </Route>
       </Routes>
     </div>
