@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   return (
     <>
       <div className="min-h-screen bg-black flex items-center justify-center px-6">
@@ -40,11 +42,17 @@ const HomePage = () => {
             transition={{ duration: 1.5, ease: "easeOut", delay: 0.6 }}
             className="mt-12 flex flex-col md:flex-row gap-4 justify-center"
           >
-            <button className="px-8 py-3 bg-white text-black text-lg rounded-md hover:bg-gray-200 transition-all">
+            <button
+              className="px-8 py-3 bg-white text-black text-lg rounded-md hover:bg-gray-200 transition-all"
+              onClick={() => navigate("/donations")}
+            >
               Start Helping
             </button>
 
-            <button className="px-8 py-3 border border-white text-white text-lg rounded-md hover:bg-white hover:text-black transition-all">
+            <button
+              className="px-8 py-3 border border-white text-white text-lg rounded-md hover:bg-white hover:text-black transition-all"
+              onClick={() => navigate("/dashboard")}
+            >
               View Dashboard
             </button>
           </motion.div>

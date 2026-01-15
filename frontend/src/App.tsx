@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import BallFollower from "./components/BallFollower";
 import MainLayout from "./components/MainLayout";
 import Donation from "./pages/Donation";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   const location = useLocation();
@@ -23,6 +24,7 @@ const App = () => {
         <Route element={<MainLayout />}>
           <Route path="/home" element={<HomePage />} />
           <Route path="/donations" element={<Donation />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Route>
       </Routes>
     </div>
