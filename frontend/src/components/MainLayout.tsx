@@ -39,11 +39,6 @@ const menuItem = [
     icon: <UserOutlined />,
     label: <Link to="/volenteer">Volenteers</Link>,
   },
-  {
-    key: "/profile",
-    icon: <UserOutlined />,
-    label: <Link to="/profile">Profile</Link>,
-  },
 ];
 
 const MainLayout = () => {
