@@ -8,8 +8,13 @@ const RequestPage = () => {
         <Card>
           <Row>
             <Col>
-              <Form.Item>
-                <Input />
+              <Form.Item name={"title"} label="Title">
+                <Input placeholder="Enter title" />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item name={"description"} label="Title">
+                <Input placeholder="Enter description" />
               </Form.Item>
             </Col>
           </Row>
