@@ -1,4 +1,4 @@
-import { Card, Col, Form, Input, Row } from "antd";
+import { Card, Col, Form, Input, Row, Select } from "antd";
 
 const RequestPage = () => {
   return (
@@ -8,13 +8,30 @@ const RequestPage = () => {
         <Card>
           <Row>
             <Col>
-              <Form.Item name={"title"} label="Title">
+              <Form.Item
+                name={"title"}
+                label="Title"
+                rules={[{ required: true, message: "Title is required" }]}
+              >
                 <Input placeholder="Enter title" />
               </Form.Item>
             </Col>
             <Col>
-              <Form.Item name={"description"} label="Title">
+              <Form.Item
+                name={"description"}
+                label="Description"
+                rules={[{ required: true, message: "Description is required" }]}
+              >
                 <Input placeholder="Enter description" />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item
+                name={"category"}
+                label="Category"
+                rules={[{ required: true, message: "Category is required" }]}
+              >
+                <Select placeholder="Enter description" />
               </Form.Item>
             </Col>
           </Row>
