@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import AuthSlice from "../AuthRedux/AuthSlice";
+import volunteerTaskReducer from "../volenteerRedux/VolenteerSlice";
 
 export const store = configureStore({
   reducer: {
-    auth: AuthSlice, // ← register your slice here
+    auth: AuthSlice,
+    volunteerTasks: volunteerTaskReducer,
   },
 });
 
