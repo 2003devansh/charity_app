@@ -52,7 +52,7 @@ const VolunteerPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 bg-white">
       <h1 className="text-2xl font-semibold mb-6">Volunteer Dashboard</h1>
 
       <Tabs defaultActiveKey="1">
